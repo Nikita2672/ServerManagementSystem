@@ -1,6 +1,7 @@
 package org.example.servermanagementsystem.entity
 
 import jakarta.persistence.*
+import java.time.Clock
 import java.time.Instant
 import java.util.*
 
@@ -18,5 +19,5 @@ class Company(
     @OneToMany(mappedBy = "company", cascade = [CascadeType.ALL], orphanRemoval = true)
     val departments: MutableList<Department> = mutableListOf()
 ) {
-    constructor() : this(UUID.randomUUID(), "", Instant.now(), mutableListOf())
+    constructor(clock: Clock) : this(UUID.randomUUID(), "", Instant.now(clock), mutableListOf())
 }

@@ -1,8 +1,9 @@
 package org.example.servermanagementsystem.service
 
-import org.example.servermanagementsystem.dto.response.ServerResponseDto
 import org.example.servermanagementsystem.dto.request.CreateServerRequestDto
-import java.util.UUID
+import org.example.servermanagementsystem.dto.request.UpdateServerRequestDto
+import org.example.servermanagementsystem.dto.response.ServerResponseDto
+import java.util.*
 
 interface ServerService {
 
@@ -10,7 +11,7 @@ interface ServerService {
 
     fun findServersByDepartment(departmentId: UUID): List<ServerResponseDto>
 
-    fun updateServer(serverId: UUID, createServerRequestDto: CreateServerRequestDto): ServerResponseDto
+    fun updateServer(serverId: UUID, updateServerRequestDto: UpdateServerRequestDto): ServerResponseDto
 
     fun deleteServer(serverId: UUID)
 }

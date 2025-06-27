@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component
 class DepartmentMapper {
     fun toEntity(createDepartmentRequestDto: CreateDepartmentRequestDto): Department =
         Department(
-
+            name = createDepartmentRequestDto.name
         )
 
     fun toDto(department: Department): DepartmentResponseDto =

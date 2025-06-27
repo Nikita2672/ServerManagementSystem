@@ -1,6 +1,7 @@
 package org.example.servermanagementsystem.service.impl
 
 import org.example.servermanagementsystem.dto.request.CreateServerRequestDto
+import org.example.servermanagementsystem.dto.request.UpdateServerRequestDto
 import org.example.servermanagementsystem.dto.response.ServerResponseDto
 import org.example.servermanagementsystem.exception.ResourceNotFoundException
 import org.example.servermanagementsystem.mapper.ServerMapper
@@ -33,17 +34,17 @@ class ServerServiceImpl(
     }
 
     @Transactional
-    override fun updateServer(serverId: UUID, createServerRequestDto: CreateServerRequestDto): ServerResponseDto {
+    override fun updateServer(serverId: UUID, updateServerRequestDto: UpdateServerRequestDto): ServerResponseDto {
         val server = serverRepository.findById(serverId)
             .orElseThrow { ResourceNotFoundException("Server not found") }
-        val employee = employeeRepository.findById(createServerRequestDto.responsibleId)
+        val employee = employeeRepository.findById(updateServerRequestDto.responsibleId)
             .orElseThrow { ResourceNotFoundException("Employee not found") }
 
-        server.name = createServerRequestDto.name
-        server.manufacturer = createServerRequestDto.manufacturer
-        server.ip = createServerRequestDto.ip
-        server.ramGb = createServerRequestDto.ramGb
-        server.diskGb = createServerRequestDto.diskGb
+        server.name = updateServerRequestDto.name
+        server.manufacturer = updateServerRequestDto.manufacturer
+        server.ip = updateServerRequestDto.ip
+        server.ramGb = updateServerRequestDto.ramGb
+        server.diskGb = updateServerRequestDto.diskGb
         server.responsible = employee
 
         val updatedServer = serverRepository.save(server)

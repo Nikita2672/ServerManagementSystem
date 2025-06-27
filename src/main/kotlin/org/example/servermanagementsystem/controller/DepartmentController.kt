@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.validation.Valid
 import org.example.servermanagementsystem.dto.request.CreateDepartmentRequestDto
 import org.example.servermanagementsystem.dto.request.UpdateDepartmentRequestDto
 import org.example.servermanagementsystem.dto.response.DepartmentResponseDto
@@ -35,7 +36,7 @@ class DepartmentController(
     )
     @PostMapping
     fun createDepartment(
-        @RequestBody createDepartmentRequestDto: CreateDepartmentRequestDto
+        @RequestBody @Valid createDepartmentRequestDto: CreateDepartmentRequestDto
     ): DepartmentResponseDto {
         return departmentService.createDepartment(createDepartmentRequestDto)
     }
@@ -71,7 +72,7 @@ class DepartmentController(
     @PutMapping("/{departmentId}")
     fun updateDepartment(
         @PathVariable departmentId: UUID,
-        @RequestBody updateDepartmentRequestDto: UpdateDepartmentRequestDto
+        @RequestBody @Valid updateDepartmentRequestDto: UpdateDepartmentRequestDto
     ): DepartmentResponseDto {
         return departmentService.updateDepartment(departmentId, updateDepartmentRequestDto)
     }

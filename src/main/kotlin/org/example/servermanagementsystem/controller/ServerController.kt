@@ -6,7 +6,9 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.validation.Valid
 import org.example.servermanagementsystem.dto.request.CreateServerRequestDto
+import org.example.servermanagementsystem.dto.request.UpdateServerRequestDto
 import org.example.servermanagementsystem.dto.response.ServerResponseDto
 import org.example.servermanagementsystem.service.ServerService
 import org.springframework.http.HttpStatus
@@ -34,7 +36,7 @@ class ServerController(
     )
     @PostMapping
     fun createServer(
-        @RequestBody createServerRequestDto: CreateServerRequestDto
+        @RequestBody @Valid createServerRequestDto: CreateServerRequestDto
     ): ServerResponseDto {
         return serverService.createServer(createServerRequestDto)
     }
@@ -70,7 +72,7 @@ class ServerController(
     @PutMapping("/{id}")
     fun updateServer(
         @PathVariable id: UUID,
-        @RequestBody updateServerRequestDto: CreateServerRequestDto
+        @RequestBody @Valid updateServerRequestDto: UpdateServerRequestDto
     ): ServerResponseDto {
         return serverService.updateServer(id, updateServerRequestDto)
     }

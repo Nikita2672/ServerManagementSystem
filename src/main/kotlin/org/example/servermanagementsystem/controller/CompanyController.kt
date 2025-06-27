@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.validation.Valid
 import org.example.servermanagementsystem.dto.request.CreateCompanyRequestDto
 import org.example.servermanagementsystem.dto.request.UpdateCompanyRequestDto
 import org.example.servermanagementsystem.dto.response.CompanyResponseDto
@@ -35,7 +36,7 @@ class CompanyController(
     )
     @PostMapping
     fun createCompany(
-        @RequestBody createCompanyRequestDto: CreateCompanyRequestDto
+        @Valid @RequestBody createCompanyRequestDto: CreateCompanyRequestDto
     ): CompanyResponseDto {
         return companyService.createCompany(createCompanyRequestDto)
     }
@@ -71,7 +72,7 @@ class CompanyController(
     @PutMapping("/{companyId}")
     fun updateCompany(
         @PathVariable companyId: UUID,
-        @RequestBody updateCompanyRequestDto: UpdateCompanyRequestDto
+        @RequestBody @Valid updateCompanyRequestDto: UpdateCompanyRequestDto
     ): CompanyResponseDto {
         return companyService.updateCompany(companyId, updateCompanyRequestDto)
     }

@@ -21,7 +21,13 @@ class DepartmentServiceImpl(
 
     @Transactional
     override fun createDepartment(createDepartmentRequestDto: CreateDepartmentRequestDto): DepartmentResponseDto {
+        val company = companyRepository.findById(createDepartmentRequestDto.companyId).orElseThrow {
+            ResourceNotFoundException("Company with id ${createDepartmentRequestDto.companyId} not found")
+        }
+
         val department = departmentMapper.toEntity(createDepartmentRequestDto)
+        department.company = company
+
         val savedDepartment = departmentRepository.save(department)
         return departmentMapper.toDto(savedDepartment)
     }
@@ -33,7 +39,10 @@ class DepartmentServiceImpl(
     }
 
     @Transactional
-    override fun updateDepartment(departmentId: UUID, updateDepartmentRequestDto: UpdateDepartmentRequestDto): DepartmentResponseDto {
+    override fun updateDepartment(
+        departmentId: UUID,
+        updateDepartmentRequestDto: UpdateDepartmentRequestDto
+    ): DepartmentResponseDto {
         val department = departmentRepository.findById(departmentId)
             .orElseThrow { ResourceNotFoundException("Department with id $departmentId not found") }
         val company = companyRepository.findById(updateDepartmentRequestDto.companyId)

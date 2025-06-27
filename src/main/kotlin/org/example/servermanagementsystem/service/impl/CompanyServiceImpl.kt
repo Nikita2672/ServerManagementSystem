@@ -24,6 +24,7 @@ class CompanyServiceImpl(
         return companyMapper.toDto(savedCompany)
     }
 
+    @Transactional
     override fun getCompany(companyId: UUID): CompanyResponseDto {
         val company = companyRepository.findById(companyId)
             .orElseThrow { ResourceNotFoundException("company with id $companyId not found") }

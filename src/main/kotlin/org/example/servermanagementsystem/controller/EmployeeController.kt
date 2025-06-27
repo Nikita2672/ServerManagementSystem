@@ -4,9 +4,9 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
-import io.swagger.v3.oas.annotations.parameters.RequestBody as SwaggerRequestBody
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.validation.Valid
 import org.example.servermanagementsystem.dto.request.CreateEmployeeRequestDto
 import org.example.servermanagementsystem.dto.request.UpdateEmployeeRequestDto
 import org.example.servermanagementsystem.dto.response.EmployeeResponseDto
@@ -14,6 +14,7 @@ import org.example.servermanagementsystem.service.EmployeeService
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import java.util.*
+import io.swagger.v3.oas.annotations.parameters.RequestBody as SwaggerRequestBody
 
 @Tag(name = "Employee Management", description = "API для управления сотрудниками")
 @RestController
@@ -35,7 +36,7 @@ class EmployeeController(
     )
     @PostMapping
     fun createEmployee(
-        @RequestBody createEmployeeRequestDto: CreateEmployeeRequestDto
+        @RequestBody @Valid createEmployeeRequestDto: CreateEmployeeRequestDto
     ): EmployeeResponseDto {
         return employeeService.createEmployee(createEmployeeRequestDto)
     }
@@ -86,7 +87,7 @@ class EmployeeController(
     @PutMapping("/{employeeId}")
     fun updateEmployee(
         @PathVariable employeeId: UUID,
-        @RequestBody updateEmployeeRequestDto: UpdateEmployeeRequestDto
+        @RequestBody @Valid updateEmployeeRequestDto: UpdateEmployeeRequestDto
     ): EmployeeResponseDto {
         return employeeService.updateEmployee(employeeId, updateEmployeeRequestDto)
     }

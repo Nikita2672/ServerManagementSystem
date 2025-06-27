@@ -2,70 +2,21 @@ package org.example.servermanagementsystem.server
 
 import org.example.servermanagementsystem.AbstractTest
 import org.example.servermanagementsystem.dto.request.CreateServerRequestDto
-import org.example.servermanagementsystem.entity.Company
-import org.example.servermanagementsystem.entity.Department
-import org.example.servermanagementsystem.entity.Employee
-import org.example.servermanagementsystem.entity.Server
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.put
-import java.util.*
 
 class ServerControllerTest : AbstractTest() {
 
-    protected lateinit var testCompany: Company
-    protected lateinit var testDepartment: Department
-    protected lateinit var testEmployee: Employee
-    protected lateinit var testServer: Server
-
-    @BeforeEach
-    fun setUp() {
-        // Company
-        testCompany = Company(
-            id = UUID.randomUUID(),
-            name = "Test Company"
-        )
-        companyRepository.save(testCompany)
-
-        // Department
-        testDepartment = Department(
-            id = UUID.randomUUID(),
-            name = "Test Department",
-            company = testCompany
-        )
-        departmentRepository.save(testDepartment)
-
-        // Employee
-        testEmployee = Employee(
-            id = UUID.randomUUID(),
-            name = "Test Employee",
-            email = "test@example.com",
-            position = "Engineer",
-            department = testDepartment
-        )
-        employeeRepository.save(testEmployee)
-
-        // Server
-        testServer = Server(
-            id = UUID.randomUUID(),
-            name = "Test Server",
-            ip = "192.168.1.100",
-            ramGb = 16,
-            diskGb = 256,
-            manufacturer = "Dell",
-            responsible = testEmployee
-        )
-        serverRepository.save(testServer)
-    }
-
     @Test
-    fun getServersByDepartmentId() {
+    fun getServersByDepartmentIdTest() {
         mockMvc.get("/api/v1/servers/by-department/${testDepartment.id}") {
             accept = MediaType.APPLICATION_JSON
         }
@@ -156,4 +107,92 @@ class ServerControllerTest : AbstractTest() {
 
         Assertions.assertEquals(0, serverRepository.count(), "Серверов в базе больше быть не должно")
     }
+
+    @ParameterizedTest
+    @ValueSource(strings = ["", " ", "  ", "\t", "\n", "m"])
+    fun return400IfNameIsNotValidTest(name: String) {
+        val payload = """
+            {
+              "name": "$name",
+              "manufacturer": "Dell",
+              "ip": "192.168.0.1",
+              "ramGb": 16,
+              "diskGb": 256,
+              "responsibleId": "${testEmployee.id}"
+            }
+        """.trimIndent()
+
+        mockMvc.post("/api/v1/servers") {
+            contentType = MediaType.APPLICATION_JSON
+            content = payload
+        }.andExpect {
+            status { isBadRequest() }
+        }
+    }
+
+    @Test
+    fun validUserNameTest() {
+        val payload = """
+            {
+              "name": "mm",
+              "manufacturer": "Dell",
+              "ip": "192.168.0.1",
+              "ramGb": 16,
+              "diskGb": 256,
+              "responsibleId": "${testEmployee.id}"
+            }
+        """.trimIndent()
+
+        mockMvc.post("/api/v1/servers") {
+            contentType = MediaType.APPLICATION_JSON
+            content = payload
+        }.andExpect {
+            status { isOk() }
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = ["2001::85a3::8a2e", "2001:db8:85a3", "12345::abcd", "::1::", "fe80:::1", " ", "192.168.1", "192.168.01.1", "192.168.1.1.1", "192.168.1.", "256.100.100.100"])
+    fun return400IfIpIsNotValidTest(ip: String) {
+        val payload = """
+            {
+              "name": "name",
+              "manufacturer": "Dell",
+              "ip": "$ip",
+              "ramGb": 16,
+              "diskGb": 256,
+              "responsibleId": "${testEmployee.id}"
+            }
+        """.trimIndent()
+
+        mockMvc.post("/api/v1/servers") {
+            contentType = MediaType.APPLICATION_JSON
+            content = payload
+        }.andExpect {
+            status { isBadRequest() }
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = ["0.0.0.0", "255.255.255.255", "172.16.254.3", "10.0.0.255", "2001:0db8:85a3:0000:0000:8a2e:0370:7334", "2001:db8::1", "::1", "fe80::", "0:0:0:0:0:0:0:1"])
+    fun validIpTest(ip: String) {
+        val payload = """
+            {
+              "name": "name",
+              "manufacturer": "Dell",
+              "ip": "$ip",
+              "ramGb": 16,
+              "diskGb": 256,
+              "responsibleId": "${testEmployee.id}"
+            }
+        """.trimIndent()
+
+        mockMvc.post("/api/v1/servers") {
+            contentType = MediaType.APPLICATION_JSON
+            content = payload
+        }.andExpect {
+            status { isOk() }
+        }
+    }
+
 }
